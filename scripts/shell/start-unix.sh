@@ -1,0 +1,1 @@
+BROWSER=none DISABLE_ESLINT_PLUGIN=true react-app-rewired start

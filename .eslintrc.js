@@ -1,0 +1,112 @@
+module.exports = {
+  env: {
+    browser: true,
+    es2021: true,
+  },
+  extends: [
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:import/errors",
+    "plugin:import/warnings",
+    "plugin:import/typescript",
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:@typescript-eslint/recommended-requiring-type-checking",
+    "prettier",
+  ],
+  overrides: [],
+  parser: "@typescript-eslint/parser",
+  parserOptions: {
+    ecmaVersion: "latest",
+    sourceType: "module",
+    cmaFeatures: {
+      jsx: true,
+    },
+    tsconfigRootDir: __dirname,
+    project: ["./tsconfig.json"],
+  },
+  plugins: [
+    "react",
+    "import",
+    "@typescript-eslint",
+    "prettier",
+    "import-helpers",
+    "unused-imports",
+    "sort-keys-fix",
+  ],
+  rrules: {
+    indent: "off",
+    "linebreak-style": "off",
+    "no-trailing-spaces": ["error"],
+    "eol-last": ["error", "always"],
+    "import/prefer-default-export": "off",
+    "react/jsx-props-no-spreading": "off",
+    "react/react-in-jsx-scope": "off",
+    "import/extensions": "off",
+    "import/no-unresolved": "off",
+    "react/jsx-filename-extension": "off",
+    "react/prop-types": "off",
+    "react/no-children-prop": "off",
+    "no-unused-vars": "off",
+    "@typescript-eslint/unbound-method": "off",
+    "@typescript-eslint/no-unsafe-call": "off",
+    "@typescript-eslint/ban-ts-comment": "off",
+    "@typescript-eslint/no-floating-promises": "off",
+    "@typescript-eslint/no-unsafe-argument": "off",
+    "@typescript-eslint/no-unsafe-assignment": "off",
+    "@typescript-eslint/no-unsafe-member-access": "off",
+    "@typescript-eslint/indent": "off",
+    "@typescript-eslint/semi": ["error", "always"],
+    "@typescript-eslint/quotes": [
+      "error",
+      "single",
+      { allowTemplateLiterals: true },
+    ],
+    "@typescript-eslint/object-curly-spacing": ["error", "always"],
+    "@typescript-eslint/naming-convention": [
+      "error",
+      {
+        custom: {
+          match: true,
+          regex: "^I[A-Z]",
+        },
+        format: ["PascalCase"],
+        selector: "interface",
+      },
+    ],
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      {
+        vars: "all",
+        args: "after-used",
+        ignoreRestSiblings: false,
+        caughtErrors: "none",
+        argsIgnorePattern: "^_",
+      },
+    ],
+    "prettier/prettier": [
+      "error",
+      {
+        useTabs: true,
+        endOfLine: "auto",
+        printWidth: 100,
+        singleQuote: true,
+        trailingComma: "all",
+        arrowParens: "avoid",
+      },
+    ],
+  },
+  settings: {
+    react: {
+      version: "detect",
+    },
+    "import/resolver": {
+      typescript: {}, // this loads <rootdir>/tsconfig.json to eslint
+    },
+    "babel-plugin-root-import": {
+      rootPathSuffix: "./src",
+    },
+  },
+};
