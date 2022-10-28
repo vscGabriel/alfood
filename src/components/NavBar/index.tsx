@@ -97,9 +97,19 @@ const NavBar = () => {
 								display: { xs: "block", md: "none" },
 							}}>
 							{pages.map((page) => (
-								<MenuItem key={page} onClick={handleCloseNavMenu}>
-									<Typography textAlign='center'>{page}</Typography>
-								</MenuItem>
+								<Link
+									component={RouterLink}
+									to={page === "Home" ? "/" : `/${page}`}
+									underline='none'>
+									<Button
+										style={{ color: "black" }}
+										variant='text'
+										key={page}
+										onClick={handleCloseNavMenu}
+										sx={{ my: 2, color: "white", display: "block" }}>
+										{page}
+									</Button>
+								</Link>
 							))}
 						</Menu>
 					</Box>
