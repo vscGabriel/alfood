@@ -36,8 +36,8 @@ module.exports = {
     "unused-imports",
     "sort-keys-fix",
   ],
-  rrules: {
-    indent: "off",
+  rules: {
+    indent: "on",
     "linebreak-style": "off",
     "no-trailing-spaces": ["error"],
     "eol-last": ["error", "always"],
@@ -57,7 +57,7 @@ module.exports = {
     "@typescript-eslint/no-unsafe-argument": "off",
     "@typescript-eslint/no-unsafe-assignment": "off",
     "@typescript-eslint/no-unsafe-member-access": "off",
-    "@typescript-eslint/indent": "off",
+    "@typescript-eslint/indent": "on",
     "@typescript-eslint/semi": ["error", "always"],
     "@typescript-eslint/quotes": [
       "error",

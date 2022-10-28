@@ -1,34 +1,40 @@
 /** @format */
 
-import * as React from "react";
-import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
-import IconButton from "@mui/material/IconButton";
-import Typography from "@mui/material/Typography";
-import Menu from "@mui/material/Menu";
-import MenuIcon from "@mui/icons-material/Menu";
-import Container from "@mui/material/Container";
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
-import Tooltip from "@mui/material/Tooltip";
-import MenuItem from "@mui/material/MenuItem";
-import LocalDiningIcon from "@mui/icons-material/LocalDining";
-import VpnKeyIcon from "@mui/icons-material/VpnKey";
-
-const pages = ["Home", "Restaurantes"];
-
-import estilos from "./NavBar.module.scss";
+import { useState, useEffect } from "react";
+import {
+	AppBar,
+	Button,
+	Container,
+	IconButton,
+	Link,
+	Toolbar,
+	Typography,
+} from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
-import { Link } from "@mui/material";
+import { Box } from "@mui/system";
+import MenuItem from "@mui/material/MenuItem";
+import BusinessCenterIcon from "@mui/icons-material/BusinessCenter";
+import MenuIcon from "@mui/icons-material/Menu";
+import Menu from "@mui/material/Menu";
 
-const NavBar = () => {
-	const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
-		null
-	);
-	const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
-		null
-	);
+const style = {
+	position: "absolute" as "absolute",
+	top: "50%",
+	left: "50%",
+	transform: "translate(-50%, -50%)",
+	width: 400,
+	height: 100,
+	bgcolor: "white",
+	border: "1px solid #000",
+	boxShadow: 24,
+	p: 4,
+};
+
+const pages = ["Restaurantes", "Pratos"];
+
+export default function NavAdm() {
+	const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
+	const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
 
 	const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
 		setAnchorElNav(event.currentTarget);
@@ -41,15 +47,11 @@ const NavBar = () => {
 		setAnchorElNav(null);
 	};
 
-	const handleCloseUserMenu = () => {
-		setAnchorElUser(null);
-	};
-
 	return (
 		<AppBar position='static' color='transparent'>
 			<Container maxWidth='xl'>
 				<Toolbar disableGutters>
-					<LocalDiningIcon
+					<BusinessCenterIcon
 						sx={{ display: { xs: "none", md: "flex" }, mr: 1 }}
 					/>
 					<Typography
@@ -66,7 +68,7 @@ const NavBar = () => {
 							color: "inherit",
 							textDecoration: "none",
 						}}>
-						ALFOOD
+						ADM ALFOOD
 					</Typography>
 
 					<Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
@@ -103,7 +105,7 @@ const NavBar = () => {
 							))}
 						</Menu>
 					</Box>
-					<LocalDiningIcon
+					<BusinessCenterIcon
 						sx={{ display: { xs: "flex", md: "none" }, mr: 1 }}
 					/>
 					<Typography
@@ -121,13 +123,17 @@ const NavBar = () => {
 							color: "inherit",
 							textDecoration: "none",
 						}}>
-						ALFOOD
+						ADM ALFOOD
 					</Typography>
 					<Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
 						{pages.map((page) => (
 							<Link
 								component={RouterLink}
-								to={page === "Home" ? "/" : `/${page}`}
+								to={
+									page === "Restaurantes"
+										? "/admin/Restaurantes"
+										: `/admin/${page}`
+								}
 								underline='none'>
 								<Button
 									style={{ color: "black" }}
@@ -140,30 +146,11 @@ const NavBar = () => {
 							</Link>
 						))}
 					</Box>
-
-					<Box sx={{ flexGrow: 0 }}>
-						<Tooltip title='Open settings'>
-							<Link component={RouterLink} to='/admin/restaurantes'>
-								<IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-									<VpnKeyIcon fontSize='small' titleAccess='Acesso restrito' />
-								</IconButton>
-							</Link>
-						</Tooltip>
-					</Box>
+					<Link component={RouterLink} to='/' underline='none'>
+						<Button sx={{ color: "black" }}>Sair</Button>
+					</Link>
 				</Toolbar>
 			</Container>
 		</AppBar>
-		// <nav className={estilos.Link}>
-		// 	<ul>
-		// 		<li>
-		// 			<Link to='/'>Home</Link>
-		// 		</li>
-		// 		<li>
-		// 			<Link to='/restaurantes'>Restaurantes</Link>
-		// 		</li>
-		// 	</ul>
-		// </nav>
 	);
-};
-
-export default NavBar;
+}

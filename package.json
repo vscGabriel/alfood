@@ -5,11 +5,12 @@
   "dependencies": {
     "@emotion/react": "^11.10.4",
     "@emotion/styled": "^11.10.4",
+    "@mui/icons-material": "^5.10.9",
     "@mui/material": "^5.10.10",
     "@testing-library/jest-dom": "^5.16.1",
-    "@testing-library/react": "^12.1.2",
+    "@testing-library/react": "^13.2.0",
     "@testing-library/user-event": "^13.5.0",
-    "@types/jest": "^27.4.0",
+    "@types/jest": "^27.5.1",
     "@types/node": "^16.11.21",
     "@types/react": "^17.0.38",
     "@types/react-dom": "^17.0.11",
@@ -27,8 +28,8 @@
   },
   "scripts": {
     "start:windows": "./scripts/bat/start-windows.bat",
-    "start:unix": "/.scripts/shell/start-unix.sh",
-    "build": "react-scripts build",
+    "start:unix": "./scripts/shell/start-unix.sh",
+    "build": "DISABLE_ESLINT_PLUGIN=true react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

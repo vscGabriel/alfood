@@ -1,52 +1,198 @@
-import { Button, TextField } from "@mui/material";
+/** @format */
+
+import { useState, useEffect } from "react";
+import IPrato from "./../../../interfaces/IPrato";
+import {
+	Button,
+	Modal,
+	Paper,
+	Table,
+	TableBody,
+	TableCell,
+	TableContainer,
+	TableHead,
+	TableRow,
+} from "@mui/material";
 import axios from "axios";
-import { useState, useEffect } from 'react';
+import { Box } from "@mui/system";
+import { TextField } from "@mui/material";
 import { toast } from "react-toastify";
-import { useParams } from 'react-router-dom';
-import IRestaurante from './../../../interfaces/IRestaurante';
+import NavAdm from "./components";
 
-export default function FormularioRestaurante() {
-    const paramets = useParams()
+const style = {
+	position: "absolute" as "absolute",
+	top: "50%",
+	left: "50%",
+	transform: "translate(-50%, -50%)",
+	width: 400,
+	height: 100,
+	bgcolor: "white",
+	border: "1px solid #000",
+	boxShadow: 24,
+	p: 4,
+};
 
-    const [nomeRestaurante, setNomeRestaurante] = useState('')
+export default function FormularioPratos() {
+	const [openEdit, setOpenEdit] = useState(false);
+	const [openNovo, setOpenNovo] = useState(false);
+	const [pratos, setPratos] = useState<IPrato[]>([]);
+	const [nomePrato, setNomePrato] = useState("");
 
-    const submitionForm = (evento: React.FormEvent<HTMLFormElement>) => {
-        evento.preventDefault()
-        if (paramets.id) {
-            axios.put(`http://localhost:8000/api/v2/restaurantes/${paramets.id}/`, {
-                nome: nomeRestaurante,
-            })
-                .then(() => {
-                    alert("Atualizado com sucesso");
-                })
+	const submitionForm = () => {
+		axios
+			.post("http://localhost:8000/api/v2/pratos/", {
+				nome: nomePrato,
+			})
+			.then(() => {
+				toast.success("Cadastrado com sucesso");
 
-        } else {
-            axios.post('http://localhost:8000/api/v2/restaurantes/', {
-                nome: nomeRestaurante
-            })
-                .then(() => {
-                    alert("Restaurante cadastrado com sucesso.");
-                })
-        }
+				setOpenNovo(!openNovo);
+			});
+	};
 
-    }
+	const submitionEdit = (idRest: number) => {
+		axios
+			.put(`http://localhost:8000/api/v2/pratos/${idRest}/`, {
+				nome: nomePrato,
+			})
+			.then(() => {
+				toast("Alterado com sucesso");
+				setOpenEdit(!openEdit);
+			});
+	};
 
-    useEffect(() => {
-        if (paramets.id) {
-            axios.get<IRestaurante>(`http://localhost:8000/api/v2/restaurantes/${paramets.id}/`)
-                .then(response => setNomeRestaurante(response.data.nome))
-        }
-    }, [paramets])
+	const del = (restDel: IPrato) => {
+		axios
+			.delete(`http://localhost:8000/api/v2/pratos/${restDel.id}/`)
+			.then(() => {
+				const listRest = pratos.filter((el) => el.id !== restDel.id);
 
-    return (
-        <form onSubmit={submitionForm}>
-            <TextField
-                value={nomeRestaurante}
-                onChange={element => setNomeRestaurante(element.target.value)}
-                id="standard-basic"
-                label="Standard"
-                variant="standard" />
-            <Button type="submit" variant="outlined">Salvar</Button>
-        </form>
-    )
+				setPratos(listRest);
+			});
+	};
+
+	useEffect(() => {
+		axios
+			.get("http://localhost:8000/api/v2/pratos/")
+			.then((response) => setPratos(response.data));
+	}, []);
+
+	useEffect(() => {
+		axios
+			.get("http://localhost:8000/api/v2/pratos/")
+			.then((response) => setPratos(response.data));
+	}, [openEdit, openNovo]);
+	return (
+		<>
+			<NavAdm />
+			<TableContainer component={Paper}>
+				<Table>
+					<TableHead>
+						<TableRow>
+							<TableCell>Nome</TableCell>
+							<TableCell>Editar</TableCell>
+							<TableCell>Excluir</TableCell>
+							<TableCell>
+								<Button
+									variant='outlined'
+									onClick={() => setOpenNovo(!openNovo)}>
+									Novo
+								</Button>
+								<Modal
+									open={openNovo}
+									onClose={() => setOpenNovo(!openNovo)}
+									aria-labelledby='modal-modal-title'
+									aria-describedby='modal-modal-description'>
+									<Box sx={style}>
+										<form>
+											<TextField
+												fullWidth
+												value={nomePrato}
+												onChange={(element) =>
+													setNomePrato(element.target.value)
+												}
+												id='standard-basic'
+												label='Nome restaurante'
+												variant='standard'
+												required
+											/>
+											<Box sx={{ my: 2 }}>
+												<Button
+													sx={{ mx: 2 }}
+													variant='outlined'
+													onClick={submitionForm}>
+													Salvar
+												</Button>
+												<Button
+													sx={{ mx: 2 }}
+													color='error'
+													variant='outlined'
+													onClick={() => setOpenNovo(!openNovo)}>
+													Cancelar
+												</Button>
+											</Box>
+										</form>
+									</Box>
+								</Modal>
+							</TableCell>
+						</TableRow>
+					</TableHead>
+					<TableBody>
+						{pratos.map((element) => (
+							<TableRow key={element.id}>
+								<TableCell>{element.nome}</TableCell>
+								<TableCell>
+									<Button
+										variant='outlined'
+										onClick={() => setOpenEdit(!openEdit)}>
+										Editar
+									</Button>
+									<Modal
+										open={openEdit}
+										onClose={() => setOpenEdit(!openEdit)}
+										aria-labelledby='modal-modal-title'
+										aria-describedby='modal-modal-description'>
+										<Box sx={style}>
+											<form>
+												<TextField
+													value={nomePrato}
+													onChange={(element) =>
+														setNomePrato(element.target.value)
+													}
+													id='standard-basic'
+													label='Nome Restaurante'
+													variant='standard'
+													required
+												/>
+												<Button
+													variant='outlined'
+													onClick={() => submitionEdit(element.id)}>
+													Salvar
+												</Button>
+												<Button
+													sx={{ mx: 2 }}
+													color='error'
+													variant='outlined'
+													onClick={() => setOpenEdit(!openEdit)}>
+													Cancelar
+												</Button>
+											</form>
+										</Box>
+									</Modal>
+								</TableCell>
+								<TableCell>
+									<Button
+										variant='outlined'
+										color='error'
+										onClick={() => del(element)}>
+										Deletar
+									</Button>
+								</TableCell>
+							</TableRow>
+						))}
+					</TableBody>
+				</Table>
+			</TableContainer>
+		</>
+	);
 }

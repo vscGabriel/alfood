@@ -1,157 +1,201 @@
-import IRestaurante from './../../interfaces/IRestaurante';
-import { useState, useEffect } from 'react';
-import { Button, Modal, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
-import axios from 'axios';
-import { Link, useParams } from 'react-router-dom';
-import { Box } from '@mui/system';
-import { TextField } from '@mui/material';
+/** @format */
+import * as React from "react";
+
+import IRestaurante from "./../../interfaces/IRestaurante";
+import { useState, useEffect } from "react";
+import {
+	Button,
+	Modal,
+	Paper,
+	Table,
+	TableBody,
+	TableCell,
+	TableContainer,
+	TableHead,
+	TableRow,
+} from "@mui/material";
+import axios from "axios";
+import { Box } from "@mui/system";
+import { TextField } from "@mui/material";
+import { toast } from "react-toastify";
+import NavAdm from "./components/components";
 
 const style = {
-    position: 'absolute' as 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 400,
-    bgcolor: 'white',
-    border: '2px solid #000',
-    boxShadow: 24,
-    p: 4,
+	position: "absolute" as "absolute",
+	top: "50%",
+	left: "50%",
+	transform: "translate(-50%, -50%)",
+	width: 400,
+	height: 100,
+	bgcolor: "white",
+	border: "1px solid #000",
+	boxShadow: 24,
+	p: 4,
 };
 
-
-
 export default function AdminRestaurantes() {
-    const [restaurante, setRestaurante] = useState<IRestaurante[]>([]);
-    const [open, setOpen] = useState(false);
-    const [id, setId] = useState<number>()
+	const [restaurante, setRestaurante] = useState<IRestaurante[]>([]);
+	const [openEdit, setOpenEdit] = useState(false);
+	const [openNovo, setOpenNovo] = useState(false);
 
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
+	const [nomeRestaurante, setNomeRestaurante] = useState("");
 
-    const paramets = useParams()
+	const submitionForm = () => {
+		axios
+			.post("http://localhost:8000/api/v2/restaurantes/", {
+				nome: nomeRestaurante,
+			})
+			.then(() => {
+				toast.success("Cadastrado com sucesso");
 
-    const [nomeRestaurante, setNomeRestaurante] = useState('')
+				setOpenNovo(!openNovo);
+			});
+	};
 
-    const submitionForm = (evento: React.FormEvent<HTMLFormElement>) => {
-        evento.preventDefault()
-        axios.post('http://localhost:8000/api/v2/restaurantes/', {
-            nome: nomeRestaurante
-        })
-            .then(() => {
-                handleClose();
-            })
+	const submitionEdit = (idRest: number) => {
+		axios
+			.put(`http://localhost:8000/api/v2/restaurantes/${idRest}/`, {
+				nome: nomeRestaurante,
+			})
+			.then(() => {
+				toast("Alterado com sucesso");
+				setOpenEdit(!openEdit);
+			});
+	};
 
-    }
+	const del = (restDel: IRestaurante) => {
+		axios
+			.delete(`http://localhost:8000/api/v2/restaurantes/${restDel.id}/`)
+			.then(() => {
+				const listRest = restaurante.filter((el) => el.id !== restDel.id);
 
-    const submitionEdit = (evento: React.FormEvent<HTMLFormElement>) => {
+				setRestaurante(listRest);
+			});
+	};
 
-        axios.put(`http://localhost:8000/api/v2/restaurantes/${id}/`, {
-            nome: nomeRestaurante,
-        })
-            .then(() => {
-                alert("Cadastrado com sucesso");
-            })
-    }
+	useEffect(() => {
+		axios
+			.get("http://localhost:8000/api/v2/restaurantes/")
+			.then((response) => setRestaurante(response.data));
+	}, []);
 
-    const del = (restDel: IRestaurante) => {
-        axios.delete(`http://localhost:8000/api/v2/restaurantes/${restDel.id}/`)
-            .then(() => {
-                const listRest = restaurante.filter(el => el.id !== restDel.id);
+	useEffect(() => {
+		axios
+			.get("http://localhost:8000/api/v2/restaurantes/")
+			.then((response) => setRestaurante(response.data));
+	}, [openEdit, openNovo]);
 
-                setRestaurante(listRest);
-
-            })
-    }
-
-    useEffect(() => {
-        if (paramets.id) {
-            axios.get<IRestaurante>(`http://localhost:8000/api/v2/restaurantes/${paramets.id}/`)
-                .then(response => setNomeRestaurante(response.data.nome))
-        }
-    }, [paramets, open])
-
-
-    useEffect(() => {
-        axios.get('http://localhost:8000/api/v2/restaurantes/')
-            .then(response => setRestaurante(response.data));
-    }, [])
-
-
-
-
-    return (
-        <TableContainer component={Paper}>
-            <Table>
-                <TableHead>
-                    <TableRow>
-                        <TableCell>
-                            Nome
-                        </TableCell>
-                        <TableCell>
-                            Editar
-                        </TableCell>
-                        <TableCell>
-                            Excluir
-                        </TableCell>
-                        <TableCell>
-                            <Button variant='outlined' onClick={handleOpen}>Novo</Button>
-                            <Modal
-                                open={open}
-                                onClose={handleClose}
-                                aria-labelledby="modal-modal-title"
-                                aria-describedby="modal-modal-description" >
-                                <Box sx={style}>
-                                    <form onSubmit={submitionForm}>
-                                        <TextField
-                                            value={nomeRestaurante}
-                                            onChange={element => setNomeRestaurante(element.target.value)}
-                                            id="standard-basic"
-                                            label="Nome restaurante"
-                                            variant="standard"
-                                            required />
-                                        <Button type="submit" variant="outlined" >Salvar</Button>
-                                    </form>
-                                </Box>
-                            </Modal>
-                        </TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {restaurante.map(element =>
-                        <TableRow key={element.id}>
-                            <TableCell>
-                                {element.nome}
-                            </TableCell>
-                            <TableCell>
-                                <Button variant='outlined' onClick={handleOpen}>Editar</Button>
-                                <Modal
-                                    open={open}
-                                    onClose={handleClose}
-                                    aria-labelledby="modal-modal-title"
-                                    aria-describedby="modal-modal-description" >
-                                    <Box sx={style}>
-                                        <form onSubmit={submitionEdit}>
-                                            <TextField
-                                                value={nomeRestaurante}
-                                                onChange={element => setNomeRestaurante(element.target.value)}
-                                                id="standard-basic"
-                                                label="Nome Restaurante"
-                                                variant="standard"
-                                                required />
-                                            <Button type="submit" variant="outlined" onClick={() => setId(element.id)}>Salvar</Button>
-                                        </form>
-                                    </Box>
-                                </Modal>
-                            </TableCell>
-                            <TableCell>
-                                <Button variant='outlined' color="error" onClick={() => del(element)}>
-                                    Deletar
-                                </Button>
-                            </TableCell>
-                        </TableRow>
-                    )}
-                </TableBody>
-            </Table>
-        </TableContainer>
-    )
+	return (
+		<>
+			<NavAdm />
+			<TableContainer component={Paper}>
+				<Table>
+					<TableHead>
+						<TableRow>
+							<TableCell>Nome</TableCell>
+							<TableCell>Editar</TableCell>
+							<TableCell>Excluir</TableCell>
+							<TableCell>
+								<Button
+									variant='outlined'
+									onClick={() => setOpenNovo(!openNovo)}>
+									Novo
+								</Button>
+								<Modal
+									open={openNovo}
+									onClose={() => setOpenNovo(!openNovo)}
+									aria-labelledby='modal-modal-title'
+									aria-describedby='modal-modal-description'>
+									<Box sx={style}>
+										<form>
+											<TextField
+												fullWidth
+												value={nomeRestaurante}
+												onChange={(element) =>
+													setNomeRestaurante(element.target.value)
+												}
+												id='standard-basic'
+												label='Nome restaurante'
+												variant='standard'
+												required
+											/>
+											<Box sx={{ my: 2 }}>
+												<Button
+													sx={{ mx: 2 }}
+													variant='outlined'
+													onClick={submitionForm}>
+													Salvar
+												</Button>
+												<Button
+													sx={{ mx: 2 }}
+													color='error'
+													variant='outlined'
+													onClick={() => setOpenNovo(!openNovo)}>
+													Cancelar
+												</Button>
+											</Box>
+										</form>
+									</Box>
+								</Modal>
+							</TableCell>
+						</TableRow>
+					</TableHead>
+					<TableBody>
+						{restaurante.map((element) => (
+							<TableRow key={element.id}>
+								<TableCell>{element.nome}</TableCell>
+								<TableCell>
+									<Button
+										variant='outlined'
+										onClick={() => setOpenEdit(!openEdit)}>
+										Editar
+									</Button>
+									<Modal
+										open={openEdit}
+										onClose={() => setOpenEdit(!openEdit)}
+										aria-labelledby='modal-modal-title'
+										aria-describedby='modal-modal-description'>
+										<Box sx={style}>
+											<form>
+												<TextField
+													value={nomeRestaurante}
+													onChange={(element) =>
+														setNomeRestaurante(element.target.value)
+													}
+													id='standard-basic'
+													label='Nome Restaurante'
+													variant='standard'
+													required
+												/>
+												<Button
+													variant='outlined'
+													onClick={() => submitionEdit(element.id)}>
+													Salvar
+												</Button>
+												<Button
+													sx={{ mx: 2 }}
+													color='error'
+													variant='outlined'
+													onClick={() => setOpenEdit(!openEdit)}>
+													Cancelar
+												</Button>
+											</form>
+										</Box>
+									</Modal>
+								</TableCell>
+								<TableCell>
+									<Button
+										variant='outlined'
+										color='error'
+										onClick={() => del(element)}>
+										Deletar
+									</Button>
+								</TableCell>
+							</TableRow>
+						))}
+					</TableBody>
+				</Table>
+			</TableContainer>
+		</>
+	);
 }
