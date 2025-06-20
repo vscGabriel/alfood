@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/alfood/static/css/main.745992f5.css",
+    "main.js": "/alfood/static/js/main.c181a43b.js",
+    "index.html": "/alfood/index.html",
+    "main.745992f5.css.map": "/alfood/static/css/main.745992f5.css.map",
+    "main.c181a43b.js.map": "/alfood/static/js/main.c181a43b.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.745992f5.css",
+    "static/js/main.c181a43b.js"
+  ]
+}
